@@ -168,7 +168,10 @@ func (c *Client) CreateOrder(ctx context.Context, params *CreateOrderParams, met
 	}
 
 	if result.Code != "SUCCESS" {
-		return nil, fmt.Errorf("request failed with code: %s", result.Code)
+		if result.ErrorMsg != "" {
+			return nil, fmt.Errorf("request failed: %s (code: %s, errorParam: %v)", result.ErrorMsg, result.Code, result.ErrorParam)
+		}
+		return nil, fmt.Errorf("request failed with code: %s, errorParam: %v", result.Code, result.ErrorParam)
 	}
 
 	return &result, nil
